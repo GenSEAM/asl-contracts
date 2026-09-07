@@ -10,8 +10,12 @@
     (:sym :name "ContractEvent" :kind :type :tokens 2)
     (:sym :name "ContractError" :kind :type :tokens 2)
     (:sym :name "TransitionResult" :kind :type :tokens 2)
+    (:sym :name "PipelineStage" :kind :type :tokens 2)
+    (:sym :name "StageStatus" :kind :type :tokens 2)
+    (:sym :name "StageContract" :kind :type :tokens 2)
     (:sym :name "transition-success" :kind :fn :tokens 2)
     (:sym :name "transition-revert" :kind :fn :tokens 2)
+    (:sym :name "stage-transition" :kind :fn :tokens 2)
     (:sym :name "run-tests" :kind :fn :tokens 2)
 
     ;; Extended Identifiers (> 2 tokens with required :rationale)
@@ -29,5 +33,29 @@
           :rationale "Unit test suite checking success and revert transition outputs")
     (:sym :name "test-balance-invariant" :kind :fn :tokens 3
           :rationale "Unit test suite proving non-negative balance guard enforcement")
+    (:sym :name "make-stage-contract" :kind :fn :tokens 3
+          :rationale "Pipeline stage contract constructor establishing pending execution lifecycle")
+    (:sym :name "stage-set-output" :kind :fn :tokens 3
+          :rationale "Sets produced artifact or metric key-value pair in stage contract outputs map")
+    (:sym :name "stage-set-error" :kind :fn :tokens 3
+          :rationale "Transitions stage contract into failed status with descriptive diagnostic message")
+    (:sym :name "is-stage-terminal?" :kind :fn :tokens 3
+          :rationale "Predicate checking whether stage status is terminal (completed or failed)")
+    (:sym :name "is-stage-successful?" :kind :fn :tokens 3
+          :rationale "Predicate checking whether stage completed without recording error state")
+    (:sym :name "validate-stage-contract" :kind :fn :tokens 3
+          :rationale "Validates structural integrity and error-message consistency invariants of stage contract")
+    (:sym :name "test-stage-creation" :kind :fn :tokens 3
+          :rationale "Unit test suite verifying initial stage contract creation and default values")
+    (:sym :name "test-stage-transitions" :kind :fn :tokens 3
+          :rationale "Unit test suite verifying stage status transitions from pending through completed")
+    (:sym :name "test-stage-output" :kind :fn :tokens 3
+          :rationale "Unit test suite verifying output key-value artifact recording on stage contract")
+    (:sym :name "test-stage-error-handling" :kind :fn :tokens 4
+          :rationale "Unit test suite verifying error capture, failed status setting, and failure predicates")
+    (:sym :name "test-stage-terminal-states" :kind :fn :tokens 4
+          :rationale "Unit test suite verifying terminal predicate across pending, running, and terminal states")
+    (:sym :name "test-stage-invariants" :kind :fn :tokens 3
+          :rationale "Unit test suite verifying contract structural validation and error consistency guards")
   ]
 )
