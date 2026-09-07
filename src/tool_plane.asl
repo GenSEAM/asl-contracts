@@ -130,7 +130,7 @@
     :safety (.-safety tool)
     :cmd (.-cmd tool)
     :args (.-args tool)
-    :env (.-env tool)
+    :env (map-empty)
     :secrets (list)
     :redacted true))
 

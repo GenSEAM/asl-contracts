@@ -87,14 +87,16 @@
 (df test-secret-masking-redaction [] -> Bool
   :d "Verifies that masking secrets strips raw secret refs and sets redacted flag."
   (let [(sec (tp/make-secret-ref "TOKEN" "env" "SECRET_TOKEN" "default_val"))
+        (env-map (map-set (map-empty) "API_TOKEN" "supersecret"))
         (raw (tp/make-tool-descriptor
                "auth-tool" "Auth" "doc" "guidance"
                (list "*") (list "*") (tp/safety-safe)
-               "auth" (list) (map-empty) (list sec)))
+               "auth" (list) env-map (list sec)))
         (masked (tp/mask-tool-secrets raw))]
     (and (not (.-redacted raw))
          (and (.-redacted masked)
-              (= (list-len (.-secrets masked)) 0)))))
+              (and (= (list-len (.-secrets masked)) 0)
+                   (= (map-size (.-env masked)) 0))))))
 
 (df test-tool-validation [] -> Bool
   :d "Verifies structural validity and mandatory field invariants."
@@ -117,3 +119,11 @@
                  (and (test-safety-tier-enforcement)
                       (and (test-secret-masking-redaction)
                            (test-tool-validation)))))))
+
+(assert (test-tool-descriptor-creation) "Tool descriptor creation failed")
+(assert (test-tool-scope-filtering) "Tool scope filtering failed")
+(assert (test-agent-role-authorization) "Agent role authorization failed")
+(assert (test-safety-tier-enforcement) "Safety tier enforcement failed")
+(assert (test-secret-masking-redaction) "Secret masking redaction failed")
+(assert (test-tool-validation) "Tool validation failed")
+(assert (run-tests) "Full test runner failed")
