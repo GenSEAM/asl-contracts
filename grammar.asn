@@ -13,9 +13,18 @@
     (:sym :name "PipelineStage" :kind :type :tokens 2)
     (:sym :name "StageStatus" :kind :type :tokens 2)
     (:sym :name "StageContract" :kind :type :tokens 2)
+    (:sym :name "ToolSafety" :kind :type :tokens 2)
+    (:sym :name "ToolDescriptor" :kind :type :tokens 2)
+    (:sym :name "SecretRef" :kind :type :tokens 2)
+    (:sym :name "ToolRunbook" :kind :type :tokens 2)
+    (:sym :name "ToolScopeContext" :kind :type :tokens 2)
     (:sym :name "transition-success" :kind :fn :tokens 2)
     (:sym :name "transition-revert" :kind :fn :tokens 2)
     (:sym :name "stage-transition" :kind :fn :tokens 2)
+    (:sym :name "safety-safe" :kind :fn :tokens 2)
+    (:sym :name "safety-guarded" :kind :fn :tokens 2)
+    (:sym :name "safety-dangerous" :kind :fn :tokens 2)
+    (:sym :name "make-runbook" :kind :fn :tokens 2)
     (:sym :name "run-tests" :kind :fn :tokens 2)
 
     ;; Extended Identifiers (> 2 tokens with required :rationale)
@@ -57,5 +66,35 @@
           :rationale "Unit test suite verifying terminal predicate across pending, running, and terminal states")
     (:sym :name "test-stage-invariants" :kind :fn :tokens 3
           :rationale "Unit test suite verifying contract structural validation and error consistency guards")
+
+    ;; Tool Control Plane Identifiers (> 2 tokens with required :rationale)
+    (:sym :name "make-secret-ref" :kind :fn :tokens 3
+          :rationale "Dynamic secret binding reference constructor for env and vault resolution")
+    (:sym :name "make-tool-descriptor" :kind :fn :tokens 3
+          :rationale "Tool descriptor constructor defining command, scope, and safety tier")
+    (:sym :name "make-scope-context" :kind :fn :tokens 3
+          :rationale "Scope context constructor defining active repo, role, and ceiling")
+    (:sym :name "is-tool-in-scope?" :kind :fn :tokens 3
+          :rationale "Predicate validating repository scope allowance for tool execution")
+    (:sym :name "is-agent-authorized?" :kind :fn :tokens 3
+          :rationale "Predicate validating agent role permissions for tool execution")
+    (:sym :name "is-safety-permitted?" :kind :fn :tokens 3
+          :rationale "Predicate validating safety ceiling compatibility for tool execution")
+    (:sym :name "mask-tool-secrets" :kind :fn :tokens 3
+          :rationale "Masks sensitive tokens and credentials for secure telemetry reporting")
+    (:sym :name "validate-tool-descriptor" :kind :fn :tokens 3
+          :rationale "Validates structural integrity and non-empty identifier invariants")
+    (:sym :name "test-tool-descriptor-creation" :kind :fn :tokens 4
+          :rationale "Unit test suite verifying initial tool descriptor construction")
+    (:sym :name "test-tool-scope-filtering" :kind :fn :tokens 4
+          :rationale "Unit test suite verifying multi-repo scope isolation and wildcards")
+    (:sym :name "test-agent-role-authorization" :kind :fn :tokens 4
+          :rationale "Unit test suite verifying agent role binding and permission checks")
+    (:sym :name "test-safety-tier-enforcement" :kind :fn :tokens 4
+          :rationale "Unit test suite verifying tool safety tier checks against ceiling")
+    (:sym :name "test-secret-masking-redaction" :kind :fn :tokens 4
+          :rationale "Unit test suite proving secret masking and redacted flag setting")
+    (:sym :name "test-tool-validation" :kind :fn :tokens 3
+          :rationale "Unit test suite verifying mandatory field validation rules")
   ]
 )
