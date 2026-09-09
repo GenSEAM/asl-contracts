@@ -1,7 +1,7 @@
 ;; Package Grammar & Exported Symbol Registry (ASN)
-;; @genseam/asl-contracts
+;; asl-contracts
 (:grammar
-  :package @genseam/asl-contracts
+  :package asl-contracts
   :version "0.1.0"
   :tokens-baseline 2
   :symbols [
