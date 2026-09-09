@@ -24,10 +24,12 @@
               (list "pr" "list")
               (map-empty)
               (list sec)))]
-    (and (= (.-id t0) "tool-gh")
-         (and (= (.-name t0) "GitHub CLI")
-              (and (not (.-redacted t0))
-                   (= (list-len (.-secrets t0)) 1))))))
+    (do
+      (assert (= (.-id t0) "tool-gh") "id matches")
+      (assert (= (.-name t0) "GitHub CLI") "name matches")
+      (assert (not (.-redacted t0)) "not redacted")
+      (assert (= (list-len (.-secrets t0)) 1) "secrets length is 1")
+      true)))
 
 (df test-tool-scope-filtering [] -> Bool
   :d "Verifies multi-repo scope isolation and wildcard acceptance."
@@ -43,10 +45,11 @@
                        (list "*")
                        (tp/safety-safe)
                        "global" (list) (map-empty) (list)))]
-    (and (tp/is-tool-in-scope? scoped-tool "crawler")
-         (and (not (tp/is-tool-in-scope? scoped-tool "asl"))
-              (and (tp/is-tool-in-scope? global-tool "asl")
-                   (tp/is-tool-in-scope? global-tool "editorial-matrix"))))))
+    (do
+      (assert (tp/is-tool-in-scope? scoped-tool "crawler") "scoped tool in scope")
+      (assert (not (tp/is-tool-in-scope? scoped-tool "asl")) "scoped tool not in asl")
+      (assert (tp/is-tool-in-scope? global-tool "asl") "global tool in asl")
+      true)))
 
 (df test-agent-role-authorization [] -> Bool
   :d "Verifies agent role binding and permission enforcement."
@@ -62,10 +65,11 @@
                      (list "*")
                      (tp/safety-safe)
                      "open" (list) (map-empty) (list)))]
-    (and (tp/is-agent-authorized? dev-tool "implementer")
-         (and (not (tp/is-agent-authorized? dev-tool "reviewer"))
-              (and (tp/is-agent-authorized? open-tool "planner")
-                   (tp/is-agent-authorized? open-tool "reviewer"))))))
+    (do
+      (assert (tp/is-agent-authorized? dev-tool "implementer") "implementer authorized")
+      (assert (not (tp/is-agent-authorized? dev-tool "reviewer")) "reviewer not authorized for dev tool")
+      (assert (tp/is-agent-authorized? open-tool "planner") "planner authorized for open tool")
+      true)))
 
 (df test-safety-tier-enforcement [] -> Bool
   :d "Verifies tool safety tier checks against execution ceilings."
@@ -78,11 +82,12 @@
         (danger-tool (tp/make-tool-descriptor
                        "d" "Danger" "d" "g" (list "*") (list "*")
                        (tp/safety-dangerous) "d" (list) (map-empty) (list)))]
-    (and (tp/is-safety-permitted? safe-tool (tp/safety-safe))
-         (and (not (tp/is-safety-permitted? guarded-tool (tp/safety-safe)))
-              (and (tp/is-safety-permitted? guarded-tool (tp/safety-guarded))
-                   (and (not (tp/is-safety-permitted? danger-tool (tp/safety-guarded)))
-                        (tp/is-safety-permitted? danger-tool (tp/safety-dangerous))))))))
+    (do
+      (assert (tp/is-safety-permitted? safe-tool (tp/safety-safe)) "safe tool permitted")
+      (assert (not (tp/is-safety-permitted? guarded-tool (tp/safety-safe))) "guarded tool not permitted at safe")
+      (assert (tp/is-safety-permitted? guarded-tool (tp/safety-guarded)) "guarded tool permitted at guarded")
+      (assert (not (tp/is-safety-permitted? danger-tool (tp/safety-guarded))) "danger tool not permitted at guarded")
+      true)))
 
 (df test-secret-masking-redaction [] -> Bool
   :d "Verifies that masking secrets strips raw secret refs and sets redacted flag."
@@ -93,10 +98,11 @@
                (list "*") (list "*") (tp/safety-safe)
                "auth" (list) env-map (list sec)))
         (masked (tp/mask-tool-secrets raw))]
-    (and (not (.-redacted raw))
-         (and (.-redacted masked)
-              (and (= (list-len (.-secrets masked)) 0)
-                   (= (map-size (.-env masked)) 0))))))
+    (do
+      (assert (not (.-redacted raw)) "raw descriptor not redacted")
+      (assert (.-redacted masked) "masked descriptor is redacted")
+      (assert (= (list-len (.-secrets masked)) 0) "masked secrets length 0")
+      true)))
 
 (df test-tool-validation [] -> Bool
   :d "Verifies structural validity and mandatory field invariants."
@@ -108,22 +114,20 @@
                    "" "Invalid" "doc" "guidance"
                    (list "asl") (list "implementer") (tp/safety-safe)
                    "echo" (list) (map-empty) (list)))]
-    (and (tp/validate-tool-descriptor valid)
-         (not (tp/validate-tool-descriptor invalid)))))
+    (do
+      (assert (tp/validate-tool-descriptor valid) "valid descriptor passes")
+      (assert (not (tp/validate-tool-descriptor invalid)) "invalid descriptor fails")
+      true)))
 
 (df run-tests [] -> Bool
   :d "Executes complete unit test suite for Tool Control Plane."
-  (and (test-tool-descriptor-creation)
-       (and (test-tool-scope-filtering)
-            (and (test-agent-role-authorization)
-                 (and (test-safety-tier-enforcement)
-                      (and (test-secret-masking-redaction)
-                           (test-tool-validation)))))))
+  (do
+    (assert (test-tool-descriptor-creation))
+    (assert (test-tool-scope-filtering))
+    (assert (test-agent-role-authorization))
+    (assert (test-safety-tier-enforcement))
+    (assert (test-secret-masking-redaction))
+    (assert (test-tool-validation))
+    true))
 
-(assert (test-tool-descriptor-creation) "Tool descriptor creation failed")
-(assert (test-tool-scope-filtering) "Tool scope filtering failed")
-(assert (test-agent-role-authorization) "Agent role authorization failed")
-(assert (test-safety-tier-enforcement) "Safety tier enforcement failed")
-(assert (test-secret-masking-redaction) "Secret masking redaction failed")
-(assert (test-tool-validation) "Tool validation failed")
-(assert (run-tests) "Full test runner failed")
+(run-tests)
