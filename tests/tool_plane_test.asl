@@ -17,7 +17,7 @@
               "GitHub CLI"
               "Manage repositories and PRs"
               "Invoke when committing, pushing, or creating PRs"
-              (list "asl" "asex")
+              (list "asl" "genseam")
               (list "implementer" "reviewer")
               (tp/safety-guarded)
               "gh"
