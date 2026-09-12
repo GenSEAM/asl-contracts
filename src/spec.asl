@@ -24,10 +24,19 @@
   (:f events (List ContractEvent) "Emitted contract events")
   (:f error-msg Str "Revert message if failed"))
 
+(df is-hex-char [(c Str)] -> Bool
+  (let [(l (string-lower c))]
+    (or (= l "0") (or (= l "1") (or (= l "2") (or (= l "3") (or (= l "4")
+    (or (= l "5") (or (= l "6") (or (= l "7") (or (= l "8") (or (= l "9")
+    (or (= l "a") (or (= l "b") (or (= l "c") (or (= l "d") (or (= l "e") (= l "f"))))))))))))))))))
+
 (df is-valid-address [(addr Str)] -> Bool
   :d "Validates that an address is a 42-character 0x-prefixed hexadecimal string."
   (and (string-starts-with? addr "0x")
-       (= (string-length addr) 42)))
+       (and (= (string-length addr) 42)
+            (let [(body (option-or (string-slice addr 2 42) ""))
+                  (chars (string-chars body))]
+              (fold (fn [(acc Bool) (c Str)] -> Bool (and acc (is-hex-char c))) true chars)))))
 
 (df make-block-context [(sender Str) (value I64) (timestamp I64) (height I64)] -> BlockContext
   :d "Constructs a verified execution context for a contract transaction."

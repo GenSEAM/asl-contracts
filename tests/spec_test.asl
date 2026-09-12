@@ -43,8 +43,7 @@
 
 (df run-tests [] -> Bool
   :d "Executes full contract specification test suite."
-  (let [(_t1 (test-address-validation))
-        (_t2 (test-block-context))
-        (_t3 (test-transition-result))
-        (_t4 (test-balance-invariant))]
-    true))
+  (let [(t1 (test-address-validation))
+        (t2 (test-block-context))
+        (t3 (test-transition-result))
+        (t4 (test-balance-invariant))] (and t1 (and t2 (and t3 t4)))))
