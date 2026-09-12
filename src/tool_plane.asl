@@ -95,15 +95,15 @@
   (let [(scopes (.-scope tool))]
     (or (list-contains? scopes "*")
         (or (list-contains? scopes "all")
-            (or (= repo "")
-                (list-contains? scopes repo))))))
+            
+                (list-contains? scopes repo)))))
 
 (df is-agent-authorized? [(tool ToolDescriptor) (role Str)] -> Bool
   :d "Checks if specified agent role is permitted to invoke the tool."
   (let [(allowed (.-agents tool))]
     (or (list-contains? allowed "*")
-        (or (= role "")
-            (list-contains? allowed role)))))
+        
+            (list-contains? allowed role))))
 
 (df is-safety-permitted? [(tool ToolDescriptor) (ceiling ToolSafety)] -> Bool
   :d "Checks if tool safety classification is within allowable ceiling."
